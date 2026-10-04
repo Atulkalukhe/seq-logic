@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090e18">
+  <meta name="description" content="An interactive classroom lab for sequential logic circuits: latches, flip-flops, shift registers, and counters.">
+  <title>Sequential Logic Lab · Unit IV</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to lesson</a>
+  <header class="topbar">
+    <button class="mobile-menu" id="menuButton" aria-label="Open lesson navigation" aria-expanded="false">☰</button>
+    <a class="brand" href="#top" aria-label="Sequential Logic Lab home"><span class="brand-mark">S<span>Q</span></span><span>SEQUENTIAL <b>LOGIC LAB</b></span></a>
+    <div class="topbar-right"><span class="course-tag">DIGITAL ELECTRONICS <i>·</i> UNIT IV</span><button class="contrast-button" id="contrastButton" type="button" aria-label="Toggle focus view" aria-pressed="false">◐ <span>Focus view</span></button></div>
+  </header>
+
+  <div class="app-shell" id="top">
+    <aside class="sidebar" id="sidebar" aria-label="Unit navigation">
+      <div class="side-heading">UNIT IV <span>45–60 MIN</span></div>
+      <nav class="lesson-nav">
+        <a class="nav-link active" href="#basics"><span class="nav-number">4.1</span><span>Sequential basics</span></a>
+        <a class="nav-link" href="#flipflops"><span class="nav-number">4.2</span><span>Flip-flops</span></a>
+        <a class="nav-link" href="#jk"><span class="nav-number">4.3</span><span>JK deep dive</span></a>
+        <a class="nav-link" href="#registers"><span class="nav-number">4.4</span><span>Shift registers</span></a>
+        <a class="nav-link" href="#counters"><span class="nav-number">4.5</span><span>Counters</span></a>
+      </nav>
+      <div class="sidebar-note"><span class="live-dot"></span><div><b>Interactive lab</b><small>Change a signal. See what remembers.</small></div></div>
+      <div class="keyboard-hint"><kbd>SPACE</kbd> clock pulse <span>·</span> <kbd>R</kbd> reset</div>
+    </aside>
+
+    <main id="main">
+      <section class="hero">
+        <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-line"></span> UNIT IV · SEQUENTIAL LOGIC CIRCUITS</div>
+          <h1>Memory makes<br><em>logic move.</em></h1>
+          <p>Explore circuits that remember. Toggle real inputs, send clock pulses, and watch bits travel through the building blocks of digital systems.</p>
+          <a class="hero-link" href="#basics">Start experimenting <span>↓</span></a>
+        </div>
+        <div class="hero-art" aria-label="Animated logic signal illustration">
+          <div class="art-grid"></div><svg viewBox="0 0 420 270" role="img" aria-label="Clock signal flowing through a flip-flop to an output">
+            <path class="wire wire-dim" d="M20 65H135 M20 204H135 M285 135H400"/><path class="wire wire-pulse" d="M20 65H135 M285 135H400"/>
+            <path class="clock-wave" d="M20 204h24v-30h34v60h34v-30h23"/>
+            <rect class="ff-block" x="135" y="55" width="150" height="160" rx="10"/><text class="ff-label" x="210" y="103" text-anchor="middle">D FLIP-FLOP</text><path class="ff-mark" d="M135 174l18 11-18 11"/><text class="pin-label" x="150" y="83">D</text><text class="pin-label" x="150" y="197">CLK</text><text class="pin-label" x="267" y="127">Q</text>
+            <circle class="node node-in" cx="40" cy="65" r="5"/><circle class="node node-clk" cx="55" cy="204" r="5"/><circle class="node node-out" cx="377" cy="135" r="7"/><text class="art-caption" x="24" y="42">DATA</text><text class="art-caption" x="20" y="250">CLOCK</text><text class="art-caption" x="356" y="110">OUTPUT</text>
+          </svg><div class="art-caption-bottom"><span class="live-dot"></span> ONE EDGE. ONE MEMORY UPDATE.</div>
+        </div>
+        <div class="hero-stats"><div><strong>5</strong><span>SYLLABUS MODULES</span></div><div><strong>8<span class="plus">+</span></strong><span>HANDS-ON SIMULATORS</span></div><div><strong>1</strong><span>RULE TO REMEMBER</span></div><div class="stat-quote">State changes only<br>when the circuit allows it.</div></div>
+      </section>
+
+      <div class="lesson-content">
+        <section class="lesson-section" id="basics" data-section="4.1">
+          <div class="section-heading"><div><div class="section-kicker">FOUNDATIONS <span>·</span> 4.1</div><h2>Sequential logic basics</h2><p>Combinational circuits react to inputs. Sequential circuits also carry state from the past.</p></div><span class="section-index">01 / 05</span></div>
+          <div class="comparison-grid">
+            <article class="concept-card comb-card"><div class="card-topline"><span class="icon-square">∑</span><span class="chip">NO MEMORY</span></div><h3>Combinational</h3><p>Output is a function of <b>current inputs only.</b></p><div class="mini-flow"><span class="mini-signal">A, B</span><span class="flow-arrow">→</span><span class="mini-gate">AND</span><span class="flow-arrow">→</span><span class="mini-signal output">Y</span></div><div class="live-and"><label>Input A <button class="bit-button" data-bit="comb-a" aria-label="Toggle input A">0</button></label><label>Input B <button class="bit-button" data-bit="comb-b" aria-label="Toggle input B">0</button></label><span class="live-result">Y = <b id="combY">0</b></span></div></article>
+            <article class="concept-card seq-card"><div class="card-topline"><span class="icon-square">◷</span><span class="chip chip-teal">HAS MEMORY</span></div><h3>Sequential</h3><p>Output depends on <b>current input and stored state.</b></p><div class="mini-flow"><span class="mini-signal">INPUT</span><span class="flow-arrow">→</span><span class="mini-gate memory-gate">MEMORY</span><span class="flow-arrow">→</span><span class="mini-signal output">Q</span></div><div class="state-display"><span>STORED STATE <b class="state-led" id="basicQLed">0</b></span><span id="basicStateText">Waiting for an enable or edge</span></div></article>
+          </div>
+          <div class="concept-strip"><div><span class="strip-icon">⌁</span><b>Unclocked</b><span>changes when input conditions allow</span></div><div><span class="strip-icon">◷</span><b>Clocked</b><span>changes in sync with a clock signal</span></div><div><span class="strip-icon">▰</span><b>Latch</b><span>level-sensitive storage</span></div><div><span class="strip-icon">⌁</span><b>Flip-flop</b><span>edge-sensitive storage</span></div></div>
+
+          <div class="simulator-card" id="latch-lab"><div class="sim-head"><div><span class="sim-label">SIMULATOR 01</span><h3>One bit of memory</h3><p>Compare a level-sensitive D latch with an edge-triggered D flip-flop.</p></div><span class="sim-live"><i></i> LIVE</span></div>
+            <div class="memory-lab"><div class="memory-controls"><div class="control-line"><span class="control-name">DATA INPUT <small>D</small></span><button class="bit-button large" data-bit="mem-d" aria-label="Toggle data input D">0</button></div><div class="control-line"><span class="control-name">LATCH ENABLE <small>EN</small></span><button class="toggle-button" id="latchEnable" aria-pressed="false"><i></i><span>DISABLED</span></button></div><div class="control-line"><span class="control-name">CLOCK <small>CLK</small></span><button class="pulse-button" id="memoryPulse">↑ Pulse</button></div><div class="control-caption">Enable opens the latch. A rising edge samples the flip-flop.</div></div>
+              <div class="memory-circuit"><svg viewBox="0 0 450 190" role="img" aria-label="D input connects to a latch and an edge-triggered flip-flop">
+                <path class="circuit-wire" d="M30 52H115 M30 138H115 M205 52H260 M350 52H420 M205 138H260 M350 138H420"/><circle class="circuit-node" cx="38" cy="52" r="5"/><circle class="circuit-node" cx="410" cy="52" r="5"/><rect class="circuit-block latch-block" x="115" y="26" width="90" height="54" rx="6"/><text x="160" y="58" text-anchor="middle">D LATCH</text><text class="circuit-pin" x="83" y="44">D</text><text class="circuit-pin" x="88" y="78">EN</text><text class="circuit-pin" x="213" y="57">Q</text>
+                <rect class="circuit-block ff-small" x="260" y="111" width="90" height="54" rx="6"/><text x="305" y="143" text-anchor="middle">D FF</text><path class="ff-edge" d="M260 151l10 7-10 7"/><text class="circuit-pin" x="223" y="135">D</text><text class="circuit-pin" x="225" y="173">CLK</text><text class="circuit-pin" x="356" y="143">Q</text><text class="circuit-annotation" x="119" y="102">LEVEL-SENSITIVE</text><text class="circuit-annotation" x="270" y="185">RISING EDGE</text>
+              </svg><div class="output-pair"><div><span>D LATCH Q</span><b class="state-led" id="latchQ">0</b></div><div><span>D FLIP-FLOP Q</span><b class="state-led" id="dffQ">0</b></div></div><div class="event-log" id="memoryLog" aria-live="polite">Both outputs start at 0.</div></div>
+            </div>
+          </div>
+
+          <div class="simulator-card"><div class="sim-head"><div><span class="sim-label">SIMULATOR 02</span><h3>RS latch · NAND or NOR</h3><p>Set, reset, then release the inputs to see the circuit remember.</p></div><div class="segmented" role="group" aria-label="Choose RS latch gate type"><button class="selected" data-rs-type="NOR">NOR</button><button data-rs-type="NAND">NAND</button></div></div>
+            <div class="rs-lab"><div class="rs-inputs"><div class="rs-input-row"><span id="rsSLabel">SET · S</span><button class="bit-button" data-bit="rs-s">0</button></div><div class="rs-input-row"><span id="rsRLabel">RESET · R</span><button class="bit-button" data-bit="rs-r">0</button></div><button class="action-button" id="rsApply">Apply inputs <span>↗</span></button><p class="micro-copy" id="rsModeNote">NOR latch: S and R are active high.</p></div>
+              <div class="rs-diagram"><svg viewBox="0 0 390 150" role="img" aria-label="Cross-coupled NOR gates forming an RS latch"><path class="circuit-wire" d="M20 43H85 M20 108H85 M170 43H242 M170 108H242 M242 43V108 M242 43H350 M242 108H350 M225 30H278 M225 120H278"/><path class="gate-shape" d="M85 28Q115 43 85 58L120 58Q155 43 120 28Z"/><path class="gate-shape" d="M85 93Q115 108 85 123L120 123Q155 108 120 93Z"/><circle class="bubble" cx="125" cy="43" r="4"/><circle class="bubble" cx="125" cy="108" r="4"/><text class="gate-label" x="96" y="47">OR</text><text class="gate-label" x="96" y="112">OR</text><text class="circuit-pin" x="14" y="37">S</text><text class="circuit-pin" x="14" y="103">R</text><text class="circuit-pin" x="353" y="38">Q</text><text class="circuit-pin" x="353" y="104">Q̅</text><text class="circuit-annotation" x="167" y="18">CROSS-COUPLED FEEDBACK</text></svg><div class="rs-outputs"><span>Q <b class="state-led" id="rsQ">0</b></span><span>Q̅ <b class="state-led" id="rsQbar">1</b></span><strong id="rsStatus">Stable · holding previous state</strong></div></div></div>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="flipflops" data-section="4.2">
+          <div class="section-heading"><div><div class="section-kicker">THE MEMORY ELEMENTS <span>·</span> 4.2</div><h2>Flip-flops</h2><p>Four classic flip-flops, one clock edge at a time. Switch the type and explore its behavior.</p></div><span class="section-index">02 / 05</span></div>
+          <div class="simulator-card ff-lab-card"><div class="sim-head"><div><span class="sim-label">SIMULATOR 03</span><h3>Flip-flop workbench</h3><p>Set the inputs, then pulse the clock. The output updates on the rising edge only.</p></div><div class="segmented type-tabs" role="group" aria-label="Flip-flop type"><button class="selected" data-ff-type="SR">SR</button><button data-ff-type="JK">JK</button><button data-ff-type="T">T</button><button data-ff-type="D">D</button></div></div>
+            <div class="ff-workbench"><div class="ff-input-panel"><div id="ffInputControls"></div><button class="pulse-button pulse-wide" id="ffPulse">↑ Rising clock edge <kbd>SPACE</kbd></button><div class="ff-state-line"><span>Q <b class="state-led" id="ffQ">0</b></span><span>Q̅ <b class="state-led" id="ffQbar">1</b></span><button class="text-button" id="ffReset">Reset ↺</button></div><div class="event-log" id="ffMessage" aria-live="polite">Ready · output holds until a rising edge.</div></div>
+              <div class="ff-logic-panel"><div class="logic-caption">LOGIC SYMBOL <span id="ffLogicName">SR FLIP-FLOP</span></div><svg viewBox="0 0 260 220" role="img" aria-label="Flip-flop logic block"><path class="logic-wire" d="M10 55H86 M10 165H86 M174 110H250"/><rect class="logic-block" x="86" y="35" width="88" height="150" rx="8"/><text class="logic-block-text" x="130" y="101" text-anchor="middle" id="ffBlockName">SR</text><path class="ff-edge" d="M86 150l12 8-12 8"/><text class="circuit-pin" x="22" y="49" id="ffInputLabels">S, R</text><text class="circuit-pin" x="22" y="159">CLK</text><text class="circuit-pin" x="181" y="104">Q</text><circle class="node node-out" cx="231" cy="110" r="6"/><text class="logic-formula" x="130" y="207" text-anchor="middle" id="ffFormula">Q⁺ = S + R̅Q</text></svg><div class="application-note" id="ffApplication">APPLICATION · Simple control and status storage</div></div></div>
+            <div class="truth-layout"><div><div class="table-heading">CHARACTERISTIC TABLE <span>Qₜ → Qₜ₊₁</span></div><div class="table-wrap" id="ffTruthTable"></div></div><div><div class="table-heading">EXCITATION TABLE <span>Qₜ → Qₜ₊₁</span></div><div class="table-wrap" id="ffExcitationTable"></div></div></div>
+          </div>
+          <div class="definition-row"><div class="definition-card"><b>Level triggering</b><p>While the enable level is active, a latch can follow its input. This can allow multiple changes during one long pulse.</p></div><div class="definition-card"><b>Edge triggering</b><p>A flip-flop samples at a clock transition. A rising-edge device ignores input changes between rising edges.</p></div></div>
+        </section>
+
+        <section class="lesson-section" id="jk" data-section="4.3">
+          <div class="section-heading"><div><div class="section-kicker">WHEN FEEDBACK MEETS TIME <span>·</span> 4.3</div><h2>The JK race-around</h2><p>When J = K = 1, a level-sensitive JK can toggle repeatedly if the clock stays high too long.</p></div><span class="section-index">03 / 05</span></div>
+          <div class="simulator-card race-card"><div class="sim-head"><div><span class="sim-label">SIMULATOR 04</span><h3>Watch the clock window</h3><p>Compare a level-sensitive JK with a master-slave arrangement.</p></div><div class="segmented" role="group" aria-label="Choose JK circuit style"><button class="selected" data-jk-mode="level">LEVEL JK</button><button data-jk-mode="master">MASTER–SLAVE</button></div></div>
+            <div class="race-layout"><div class="race-controls"><div class="control-line"><span class="control-name">J INPUT</span><button class="bit-button" data-bit="jk-j">1</button></div><div class="control-line"><span class="control-name">K INPUT</span><button class="bit-button" data-bit="jk-k">1</button></div><div class="control-line"><span class="control-name">STARTING Q</span><button class="bit-button" data-bit="jk-q">0</button></div><div class="control-line duration-line"><label for="raceDuration" class="control-name">HIGH PULSE WIDTH</label><div class="range-control"><input id="raceDuration" type="range" min="1" max="8" value="5"><span><b id="raceDurationValue">5</b>× tpd</span></div></div><button class="action-button" id="raceRun">Run one clock cycle <span>▶</span></button><button class="text-button" id="raceReset">Reset experiment ↺</button></div>
+              <div class="race-visual"><div class="race-equation" id="raceEquation">J = K = 1 <span>→</span> Q toggles while CLK stays HIGH</div><div class="race-wave" id="raceWave" aria-label="Animated race-around waveform"><span class="wave-label">CLK</span><div class="wave-track"><i class="clock-high"></i></div><span class="wave-label">Q</span><div class="wave-track q-track" id="qWave"></div></div><div class="race-result"><div><span>Q BEFORE</span><b class="state-led" id="raceBefore">0</b></div><span class="result-arrow">→</span><div><span>Q AFTER</span><b class="state-led" id="raceAfter">0</b></div><p id="raceStatus">Ready · set J = K = 1 to demonstrate repeated toggling.</p></div></div>
+            </div><div class="takeaway" id="raceTakeaway"><span>KEY IDEA</span> If the HIGH phase exceeds the propagation delay, the level JK may toggle more than once. Its final state becomes timing-dependent.</div>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="registers" data-section="4.4">
+          <div class="section-heading"><div><div class="section-kicker">BITS ON THE MOVE <span>·</span> 4.4</div><h2>Shift registers</h2><p>Move, load, and read four bits. Pick a register mode and watch the data path.</p></div><span class="section-index">04 / 05</span></div>
+          <div class="simulator-card register-card"><div class="sim-head"><div><span class="sim-label">SIMULATOR 05</span><h3>4-bit register lab</h3><p>Serial data moves one position per clock. Parallel data loads all at once.</p></div><span class="register-mode" id="registerModeLabel">SISO · Serial In / Serial Out</span></div>
+            <div class="register-tabs" role="group" aria-label="Shift register mode"><button class="selected" data-reg-mode="SISO"><b>SISO</b><small>Serial in → serial out</small></button><button data-reg-mode="SIPO"><b>SIPO</b><small>Serial in → parallel out</small></button><button data-reg-mode="PISO"><b>PISO</b><small>Parallel in → serial out</small></button><button data-reg-mode="PIPO"><b>PIPO</b><small>Parallel in → parallel out</small></button><button data-reg-mode="BIDIR"><b>BIDIRECTIONAL</b><small>Shift either direction</small></button><button data-reg-mode="UNIVERSAL"><b>UNIVERSAL</b><small>Hold · shift · load</small></button></div>
+            <div class="register-toolbar"><div class="direction-control" id="registerDirection"><span>DIRECTION</span><button class="selected" data-direction="right">← SHIFT RIGHT</button><button data-direction="left">SHIFT LEFT →</button></div><div class="universal-control" id="universalControl"><span>ON CLOCK EDGE</span><button class="selected" data-reg-op="hold">HOLD</button><button data-reg-op="right">SHIFT RIGHT</button><button data-reg-op="left">SHIFT LEFT</button><button data-reg-op="load">PARALLEL LOAD</button></div><div class="serial-control" id="serialControl"><span>SERIAL IN</span><button class="bit-button" data-bit="serial-in">0</button><label class="serial-out">SERIAL OUT <b id="serialOut">0</b></label></div><button class="pulse-button" id="registerPulse">↑ Clock pulse</button><button class="text-button" id="registerReset">Clear ↺</button></div>
+            <div class="register-stage"><div class="reg-port input-port" id="serialInPort"><span>SERIAL<br>INPUT</span><i id="serialInLed">0</i></div><div class="register-bits" id="registerBits"></div><div class="reg-port output-port" id="serialOutPort"><span>SERIAL<br>OUTPUT</span><i id="serialOutLed">0</i></div><svg class="register-arrow" viewBox="0 0 640 34" preserveAspectRatio="none" aria-hidden="true"><path d="M10 17H625m0 0-12-9m12 9-12 9"/></svg></div>
+            <div class="parallel-panel" id="parallelPanel"><div class="parallel-inputs"><div><span>PARALLEL INPUT <small>D3…D0</small></span><div id="parallelBits"></div></div><button class="action-button" id="parallelLoad">Load word ↥</button></div><div class="parallel-outputs"><span>PARALLEL OUTPUT <small>Q3…Q0</small></span><b id="parallelOutput">0000</b><span class="micro-copy">All four outputs are available simultaneously.</span></div></div>
+            <div class="register-status" id="registerStatus" aria-live="polite">Ready · pulse the clock to move the word.</div>
+          </div>
+        </section>
+
+        <section class="lesson-section" id="counters" data-section="4.5">
+          <div class="section-heading"><div><div class="section-kicker">STATE, COUNTED <span>·</span> 4.5</div><h2>Counters & timing</h2><p>Follow state transitions across synchronous, ripple, cyclic, and modulo counters.</p></div><span class="section-index">05 / 05</span></div>
+          <div class="simulator-card counter-card"><div class="sim-head"><div><span class="sim-label">SIMULATOR 06</span><h3>Counter workbench</h3><p>Step or run the sequence. Select a counter architecture to compare state transitions.</p></div><span class="counter-clock"><span class="live-dot"></span> CLK <b id="counterClock">LOW</b></span></div>
+            <div class="counter-type-grid" role="group" aria-label="Counter architecture"><button class="selected" data-counter="sync"><b>Synchronous</b><small>All FFs share a clock</small></button><button data-counter="ripple"><b>Asynchronous</b><small>Ripple propagation</small></button><button data-counter="ring"><b>Ring</b><small>One-hot loop</small></button><button data-counter="johnson"><b>Twisted ring</b><small>Johnson sequence</small></button><button data-counter="updown"><b>Up / down</b><small>Reversible count</small></button><button data-counter="decade"><b>Decade</b><small>MOD-10 · 0 to 9</small></button><button data-counter="modn"><b>MOD-N</b><small>Choose the modulus</small></button></div>
+            <div class="counter-options"><div class="modulus-option" id="modulusOption"><label for="modulusInput">MODULUS N</label><input type="number" id="modulusInput" min="2" max="16" value="6"><span>2 ≤ N ≤ 16</span></div><div class="count-direction" id="countDirection"><span>DIRECTION</span><button class="selected" data-count-dir="up">↑ UP</button><button data-count-dir="down">↓ DOWN</button></div><div class="counter-legend"><i></i> active bit <i class="off"></i> inactive bit <span>4-bit state · MSB → LSB</span></div></div>
+            <div class="counter-display"><div class="counter-readout"><span>DECIMAL STATE</span><strong id="counterDecimal">0</strong><div class="mod-progress" id="modProgress">MOD 16 · 0 / 16 states</div></div><div class="counter-bit-row" id="counterBits"></div><div class="counter-side"><div><span>SEQUENCE</span><b id="sequencePosition">1 / 16</b></div><div><span>NEXT STATE</span><b id="counterNext">0001</b></div><div class="counter-animation" id="counterAnimation" aria-hidden="true">CLK <i>▁▁▁▁</i></div></div></div>
+            <div class="counter-controls"><button class="action-button" id="counterStep">Clock one step <span>↑</span></button><button class="pulse-button" id="counterRun">▶ Run sequence</button><button class="text-button" id="counterReset">Reset ↺</button><span class="run-speed">AUTO · <select id="runSpeed" aria-label="Counter run speed"><option value="900">Slow</option><option value="500" selected>Normal</option><option value="220">Fast</option></select></span></div>
+            <div class="timing-heading"><div><b>LIVE TIMING DIAGRAM</b><span>Clock edges and output bits from recent states</span></div><button id="clearTiming" class="text-button">Clear history</button></div><div class="timing-chart" id="timingChart" aria-label="Live counter timing diagram"></div><div class="timing-legend"><span><i class="legend-clock"></i> CLK</span><span><i class="legend-q3"></i> Q3</span><span><i class="legend-q2"></i> Q2</span><span><i class="legend-q1"></i> Q1</span><span><i class="legend-q0"></i> Q0</span><span class="chart-note">Last 8 clock intervals · rising-edge triggered</span></div>
+            <div class="counter-status" id="counterStatus" aria-live="polite">Ready · select a counter, then apply a clock edge.</div>
+          </div>
+          <div class="concept-strip modulus-strip"><div><span class="strip-icon">N</span><b>Modulus</b><span>unique states before the sequence repeats</span></div><div><span class="strip-icon">⏱</span><b>Ripple delay</b><span>each stage waits for the previous output</span></div><div><span class="strip-icon">≋</span><b>Sync update</b><span>all stages share one clock edge</span></div><div><span class="strip-icon">↻</span><b>Ring state</b><span>feedback creates a repeating bit pattern</span></div></div>
+        </section>
+
+        <footer class="page-footer"><div class="brand-mark small-mark">S<span>Q</span></div><span>SEQUENTIAL LOGIC LAB · UNIT IV</span><a href="#top">Back to top ↑</a><small>Interactive classroom resource · Built for learning by doing</small></footer>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
